@@ -1,0 +1,39 @@
+// Define the RPM sensor pin
+int rpm_sensor = 15;
+
+// Variables for tachometer logic
+unsigned long previousMillis = 0;
+volatile int pulseCount = 0;
+const int sampleInterval = 1000; // Interval in milliseconds for calculating RPM
+// float voltage = 0.0;
+
+void setup() {
+  pinMode(rpm_sensor, INPUT);
+  Serial.begin(115200);
+  
+  // Attach interrupt to RPM sensor pin
+  attachInterrupt(digitalPinToInterrupt(rpm_sensor), countPulse, RISING);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+
+  // Check if sample interval has elapsed
+  if (currentMillis - previousMillis >= sampleInterval) {
+    // Calculate RPM
+    float rpm = (float)pulseCount * (6000.0 / sampleInterval);
+
+    // Print RPM
+    Serial.print("RPM: ");
+    Serial.println(rpm);
+
+    // Reset pulse count and update previous millis
+    pulseCount = 0;
+    previousMillis = currentMillis;
+  }
+}
+
+// Interrupt service routine to count pulses
+void countPulse() {
+  pulseCount++;
+}
