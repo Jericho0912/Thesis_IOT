@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highcharts with DynamoDB</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .panel-body {
+        display: flex;  /* Add this line */
+        flex-wrap: wrap;
+        justify-content: space-between;  /* Add this line if you want some space between the graphs */
+    }
+        #container1, #container2,
+        #container3, #container4 {
+            width: 50%;
+            height: 400px;
+            margin: 20px 0;
+            border: 1px solid black;
+        }
+        #container5{
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RPM and Voltage Graph from DynamoDB</h1>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+            </div>
+            <div class="panel-body">
+                <div id="container1" style="width: 400px; height: 400px; float: left;"></div>
+                <div id="container2" style="width: 400px; height: 400px; float: left;"></div>
+                <div id="container3" style="width: 400px; height: 400px; float: left;"></div>
+                <div id="container4" style="width: 400px; height: 400px; float: left;"></div>
+                <div id="container5" style="width: 1000px; height: 400px; float: left;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/data');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                if (!Array.isArray(data)) {
+                    throw new Error('Data is not an array');
+                }
+
+                // Calculate average RPM and average Voltage
+                const totalRpm = data.reduce((sum, item) => sum + item.rpm, 0);
+                const averageRpm = totalRpm / data.length;
+
+                const totalVoltage = data.reduce((sum, item) => sum + item.voltage, 0);
+                const averageVoltage = totalVoltage / data.length;
+
+                // Create Highcharts charts for container3 and container4
+                Highcharts.chart('container3', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Average RPM'
+                    },
+                    xAxis: {
+                        categories: ['RPM']
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Value'
+                        }
+                    },
+                    series: [{
+                        name: 'Average RPM',
+                        data: [averageRpm],
+                        dataLabels: {
+                            enabled: true,
+                            format: '{y:.2f}' // Format to two decimal places
+                        }
+                    }],
+                    credits: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: true
+                    }
+                });
+
+                Highcharts.chart('container4', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Average Voltage'
+                    },
+                    xAxis: {
+                        categories: ['Voltage']
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Value'
+                        }
+                    },
+                    series: [{
+                        name: 'Average Voltage',
+                        data: [averageVoltage],
+                        dataLabels: {
+                            enabled: true,
+                            format: '{y:.2f}' // Format to two decimal places
+                        }
+                    }],
+                    credits: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: true
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching or rendering charts:', error);
+            }
+        });
+    </script>
+    
+</body>
+</html>

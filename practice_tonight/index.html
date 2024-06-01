@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js with DynamoDB</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family:Verdana, Geneva, Tahoma, sans-serif
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        #rpmChart, #voltageChart {
+            margin: 20px 0;
+            width: calc(50% - 10px);
+        }
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 8px;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        nav li {
+            flex: 1 1 auto;
+            margin-right: 10px;
+        }
+        nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        nav li a:hover {
+            background-color: #111;
+        }
+    </style>
+</head>
+<body>
+    <h1>RPM and Voltage Graph from DynamoDB</h1>
+    <div class="container">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><strong>Line Chart</strong></h3>
+            </div>
+            <div class="panel-body">
+                <div id="container1"></div>
+            </div>
+        </div>
+        <canvas id="rpmChart" width="400" height="200"></canvas>
+        <canvas id="voltageChart" width="400" height="200"></canvas>
+    </div>
+    <script src="main.js" defer></script>
+</body>
+</html>
